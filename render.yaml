@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: quickcart-api
+    env: php
+    buildCommand: |
+      cd product-service
+      composer install --no-dev --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: |
+      cd product-service
+      php artisan migrate --force
+      php artisan db:seed --force
+      php artisan serve --host=0.0.0.0 --port=$PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_NAME
+        value: QuickCart
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /opt/render/project/src/product-service/database/database.sqlite
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
