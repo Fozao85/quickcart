@@ -1,0 +1,43 @@
+# Laravel
+/product-service/vendor/
+/product-service/node_modules/
+/product-service/public/hot
+/product-service/public/storage
+/product-service/storage/*.key
+/product-service/.env
+/product-service/.env.backup
+/product-service/.phpunit.result.cache
+/product-service/Homestead.json
+/product-service/Homestead.yaml
+/product-service/npm-debug.log
+/product-service/yarn-error.log
+/product-service/.idea
+/product-service/.vscode
+
+# Database
+/product-service/database/database.sqlite
+
+# Logs
+/product-service/storage/logs/*.log
+
+# Cache
+/product-service/bootstrap/cache/*.php
+/product-service/storage/framework/cache/*
+/product-service/storage/framework/sessions/*
+/product-service/storage/framework/views/*
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
