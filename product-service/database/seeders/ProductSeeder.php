@@ -12,6 +12,12 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
+        // Skip seeding if products already exist
+        if (Product::count() > 0) {
+            $this->command->info('Products already exist, skipping seeding.');
+            return;
+        }
+
         // Create sample products with realistic data
         $products = [
             [
