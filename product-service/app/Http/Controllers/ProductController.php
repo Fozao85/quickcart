@@ -218,4 +218,30 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get all products with basic information (legacy endpoint)
+     */
+    public function getProductsSimple(): JsonResponse
+    {
+        try {
+            $products = Product::where('is_active', true)
+                ->select('id', 'name', 'price', 'stock_quantity', 'sku')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'count' => $products->count(),
+                'data' => $products,
+                'message' => 'Products retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve products',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

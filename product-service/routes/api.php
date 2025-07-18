@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +59,13 @@ Route::get('/products-simple', function () {
     }
 });
 
-// Product API routes
+// Authentication routes (public)
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+});
+
+// Product API routes (public)
 Route::prefix('v1')->group(function () {
     // Product CRUD operations
     Route::apiResource('products', ProductController::class);
@@ -65,7 +74,37 @@ Route::prefix('v1')->group(function () {
     Route::patch('products/{id}/stock', [ProductController::class, 'updateStock']);
 });
 
-// Legacy auth route (can be removed if not needed)
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Protected routes (require authentication)
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth routes
+    Route::prefix('auth')->group(function () {
+        Route::get('me', [AuthController::class, 'me']);
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('logout-all', [AuthController::class, 'logoutAll']);
+    });
+
+    // Cart routes
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index']);
+        Route::post('items', [CartController::class, 'addItem']);
+        Route::patch('items/{id}', [CartController::class, 'updateItem']);
+        Route::delete('items/{id}', [CartController::class, 'removeItem']);
+        Route::delete('clear', [CartController::class, 'clear']);
+    });
+
+    // Order routes
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::post('/', [OrderController::class, 'store']);
+        Route::get('{id}', [OrderController::class, 'show']);
+        Route::patch('{id}/cancel', [OrderController::class, 'cancel']);
+
+        // Admin routes (for updating order status)
+        Route::patch('{id}/status', [OrderController::class, 'updateStatus']);
+    });
+
+    // Legacy user route
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
